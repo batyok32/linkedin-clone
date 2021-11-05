@@ -1,0 +1,52 @@
+Post Job
+Job
+    name / имя работы
+    work / должность 
+    тип_занятости / choice
+    country / страна
+    city / город
+    created
+    description
+    company
+    active
+    
+
+Work
+
+
+Register Worker
+
+Register Company
+    name
+    phone_number
+    description
+    
+
+Job
+Profession
+Worker
+Company
+
+1. Create Worker Profile
+    1.1 Form 
+
+2. Login / Register Company
+    2.1 Create a Profile for them
+
+3. Post Job (Company can post Job)
+
+4. Search
+    4.1 Search by company
+    4.2 Search by worker 
+
+5
+
+
+REGISTER
+    Company
+    Freelancer
+
+Login
+    Company
+    Freelancer
+    Admin
