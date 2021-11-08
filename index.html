@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linkedin Clone</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/customcss.css">
+    <script src="js/bootstrap.bundle.min.js"></script>
+
+</head>
+<body style="background: #f5f5f5;">
+    <div class="container">
+        <div class="row py-3  justify-content-between align-items-center bg-transparent ">
+            <div class="col-12 col-md-6 col-lg-4 row align-items-center ">
+                <a
+                    href="/"
+                    class="col-auto col-md-2 col-lg-2 px-3 px-md-0"
+                >
+                    <img
+                        style="width: 43px; height: 40px"
+                        src="./images/logo.png"
+                        alt="Logo"
+                    />
+                </a>
+                <div
+                    
+                    style="border-radius: 3px;background:rgba(202,204,206, 0.4);"
+                    class="col d-flex col-md-8 col-lg-8 border  align-items-center "
+                >
+                    <i class="bi bi-search  fs-6 text-muted"></i>
+                    <input
+                        type="text"
+                        name="search"
+                        id="search"
+                        placeholder="Поиск..."
+                        class="form-control bg-transparent  border-0 sm-placeholder"
+                        style="box-shadow: none;"
+                        required
+                    />
+                </div>
+            </div>
+            <div class="col-12 col-md-4 col-lg-7  d-flex justify-content-evenly justify-content-md-between align-items-center mt-3 mt-md-0">
+                <a
+                    href="/"
+                    exact
+                    class="d-flex align-items-center position-relative justify-content-between text-decoration-none top-nav"
+                >
+                    <i class="bi bi-house"></i>
+                    <span class="ms-2 fs-6 d-none d-lg-inline">
+                        Главная
+                    </span>
+                    <div class="position-absolute nav-border"></div>
+                </a>
+                <a
+                    href="/freelancers"
+                    class="d-flex position-relative align-items-center justify-content-between text-decoration-none top-nav"
+                >
+                    <i class="bi bi-people"></i>
+                    <span class="ms-2 fs-6 d-none d-lg-inline">
+                        Фрилансеры
+                    </span>
+                    <div class="position-absolute nav-border"></div>
+                </a>
+                <a
+                    href="/jobs"
+                    class="d-flex align-items-center position-relative justify-content-between text-decoration-none top-nav"
+                >
+                    <i class="bi bi-briefcase"></i>
+                    <span class="ms-2 fs-6 d-none d-lg-inline">
+                        Работы
+                    </span>
+                    <div class="position-absolute nav-border"></div>
+                </a>
+                <div class="vl col-auto"></div>
+
+                <div
+                    role="button"
+                    style="color: rgb(51, 51, 51);"
+                    class="d-flex  dropdown position-relative align-items-center justify-content-between text-decoration-none top-nav user-select-none"
+                >
+                    <i
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        class="bi bi-person-circle dropdown-toggle"
+                    ></i>
+                    <span
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        class=" ms-3 fs-6 d-none d-lg-inline dropdown-toggle truncate-overflow-1"
+                    >
+                        Пользователь
+                        <i class="ms-2 bi bi-chevron-down fs-14"></i>
+                    </span>
+                    <ul
+                        class="dropdown-menu"
+                        style="border-radius: 5px;"
+                    >
+                        <a href="/login" class="dropdown-item" href="#">
+                            <i class="bi bi-key me-2"></i>Войти
+                        </a>
+                        <a href="/signup" class="dropdown-item" href="#">
+                            <i class="bi bi-lock me-2"></i> Регистрация
+                        </a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
