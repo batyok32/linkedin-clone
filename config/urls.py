@@ -13,8 +13,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
-    path("credentials/", include('authentication.urls'))
-    # path('api/v0/linkedin/', include('genres.urls'))
+    path("credentials/", include('authentication.urls')),
+    path('api/v0/', include('main.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.DEBUG:

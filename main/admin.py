@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Profession
+from .models import Job
 
 
-@admin.register(Profession)
-class ProfessionAdmin(admin.ModelAdmin):
+@admin.register(Job)
+class JobAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug')
     prepopulated_fields = {'slug': ('name',)}

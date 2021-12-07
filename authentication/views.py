@@ -1,20 +1,27 @@
 # Models
-from .permissions import IsOwner
+from main.filters import FreelancersFilter
+from .permissions import IsOwner, IsOwnerOrReadOnly
 from .models import Company, CompanyProfile, Freelancer, FreelancerProfile, User
 # from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
 # Serializers
-from .serializers import CompanyCreateSerializer, CompanySerializer, FreelancerCreateSerializer, FreelancerSerializer
+from .serializers import CompanyCreateSerializer, \
+    CompanySerializer, \
+    FreelancerCreateSerializer, \
+    FreelancerSerializer, \
+    SearchCompanySerializer, SearchFreelancerSerializer
 
 # RESTFRAMEWORK stuff
 from rest_framework import generics
 from rest_framework.views import APIView
+from rest_framework.filters import SearchFilter
+from django_filters import rest_framework as filters
 
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, JSONParser
-
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.pagination import LimitOffsetPagination
 
@@ -23,7 +30,7 @@ class MyOffsetPagination(LimitOffsetPagination):
     """
     Custom Pagination Class
     """
-    default_limit = 20
+    default_limit = 10
     max_limit = 1000
 
 
@@ -32,6 +39,8 @@ class CompanyListCreateView(generics.ListCreateAPIView):
     List And Create Companies
     """
     serializer_class = CompanySerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['$full_name']
     pagination_class = MyOffsetPagination
     queryset = CompanyProfile.objects.all()
     parser_classes = [JSONParser, MultiPartParser]
@@ -78,6 +87,8 @@ class FreelancerListCreateView(generics.ListCreateAPIView):
     """
     queryset = FreelancerProfile.objects.all()
     serializer_class = FreelancerSerializer
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = FreelancersFilter
     pagination_class = MyOffsetPagination
 
     def get_create_serializer(self, *args, **kwargs):
@@ -122,13 +133,48 @@ class CompanyRetrieveView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = CompanyProfile.objects.all()
     serializer_class = CompanySerializer
-    permission_classes = [IsOwner, ]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
+        # print("Company retrieve")
         user = self.request.user
-        obj = get_object_or_404(queryset, user=user)
+        # print("Company user", user)
+        obj = get_object_or_404(queryset, user=user.id)
+        # print("Found company", obj)
         # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
+class RetrieveStrangerCompanyView(generics.RetrieveAPIView):
+    """
+    Retrieve
+    """
+    queryset = CompanyProfile.objects.all()
+    serializer_class = CompanySerializer
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        company_pk = self.kwargs['pk']
+        obj = get_object_or_404(queryset, user=company_pk)
+
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
+class RetrieveStrangerFreelancerView(generics.RetrieveAPIView):
+    """
+    Retrieve
+    """
+    queryset = FreelancerProfile.objects.all()
+    serializer_class = FreelancerSerializer
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        free_pk = self.kwargs['pk']
+        obj = get_object_or_404(queryset, user=free_pk)
+
         self.check_object_permissions(self.request, obj)
         return obj
 
@@ -139,11 +185,12 @@ class FreelancerRetrieveView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = FreelancerProfile.objects.all()
     serializer_class = FreelancerSerializer
-    permission_classes = [IsOwner, ]
+    permission_classes = [IsOwnerOrReadOnly, ]
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
         user = self.request.user
+        # print("user", user)
         obj = get_object_or_404(queryset, user=user)
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)
@@ -171,13 +218,35 @@ class CompanyExistView(APIView):
     """
 
     def post(self, request, *args, **kwargs):
-        print("Checking company exist")
+        # print("Checking company exist")
         full_name = request.data['full_name']
         if full_name:
             exist = CompanyProfile.objects.filter(full_name=full_name).exists()
             if exist:
-                print("Company exist")
+                # print("Company exist")
                 return Response(True, status=status.HTTP_200_OK)
-            print("Company not exist")
+            # print("Company not exist")
             return Response(False, status=status.HTTP_200_OK)
         return Response(False, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SearchCompanyView(generics.ListAPIView):
+    """
+    Search Companies
+    """
+    serializer_class = SearchCompanySerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['$full_name']
+    pagination_class = MyOffsetPagination
+    queryset = CompanyProfile.objects.all()
+
+
+class SearchFreelancerView(generics.ListAPIView):
+    """
+    Search Freelancers
+    """
+    serializer_class = SearchFreelancerSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['$full_name']
+    pagination_class = MyOffsetPagination
+    queryset = FreelancerProfile.objects.all()

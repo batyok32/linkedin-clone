@@ -2,12 +2,27 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
-from main.models import Profession
 from imagekit.models import ProcessedImageField
 from pilkit.processors import ResizeToFill
 from django.core.files.storage import default_storage
 from django.conf import settings
-from django.core.validators import MinValueValidator, MaxValueValidator
+# from django.core.validators import MinValueValidator, MaxValueValidator
+from main.utils import CITIES
+
+
+class Profession(models.Model):
+    name = models.CharField("Name of Profession", max_length=255, unique=True)
+    slug = models.SlugField("Slug", max_length=255, unique=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Profession'
+        verbose_name_plural = 'Professions'
 
 
 def select_storage():
@@ -74,6 +89,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
+    def is_company(self):
+        if self.type == self.Types.COMPANY:
+            return True
+        else:
+            return False
+
     def save(self, *args, **kwargs):
         self.full_clean()
         super(User, self).save(*args, **kwargs)
@@ -94,35 +115,31 @@ class FreelancerProfile(models.Model):
     """
     Profile Model for Freelancer
     """
-    CITIES = (
-        ('Ag', 'Ashgabat'),
-        ('Ah', 'Ahal'),
-        ('Bl', 'Balkan'),
-        ('Mr', 'Mary'),
-        ('Dz', 'Dasoguz'),
-        ('Lb', 'Lebap'),
-    )
+
     user = models.OneToOneField(
         User, related_name="freelancer_profile", on_delete=models.CASCADE)
     full_name = models.CharField("Full Name", max_length=255)
     profession = models.ForeignKey(
         Profession, related_name="freelancer", on_delete=models.CASCADE)
-    experience = models.TextField("Work experience")
-    knowledge = models.TextField("Degree / University / What do you know")
     city = models.CharField("Living City", choices=CITIES,
                             max_length=50, default="Ag")
+    experience = models.TextField("Work experience")
+    # about_me = models.TextField("About yourself")
+    knowledge = models.TextField("Degree / University / What do you know")
+
     projects = models.TextField("Which projects you did")
     phone_number = models.BigIntegerField('Contact phone number')
     birth_date = models.DateField()
-    min_price = models.PositiveIntegerField("Minimum cost of project")
-    max_price = models.PositiveIntegerField("Maximum cost of project")
+
     logo = ProcessedImageField(
-        processors=[ResizeToFill(150, 100)],
+        processors=[ResizeToFill(50, 50)],
         format="WebP",
-        options={"quality": 100},
+        options={"quality": 80},
         upload_to='freelancers/', storage=select_storage,
         default="default.jpg"
     )
+    created = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
 
     def clean(self, *args, **kwargs):
         if self.phone_number >= 99361000000 and self.phone_number <= 99365999999:
@@ -210,9 +227,9 @@ class CompanyProfile(models.Model):
     user = models.OneToOneField(
         User, related_name="company_profile", on_delete=models.CASCADE)
     logo = ProcessedImageField(
-        processors=[ResizeToFill(150, 100)],
+        processors=[ResizeToFill(50, 50)],
         format="WebP",
-        options={"quality": 100},
+        options={"quality": 80},
         upload_to='companies/',
         storage=select_storage,
         default="default.jpg"
@@ -224,6 +241,8 @@ class CompanyProfile(models.Model):
     company_type = models.CharField(
         "Type Of Company", max_length=50, choices=Types.choices)
     phone_number = models.BigIntegerField('Contact phone number')
+    created = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
 
     def clean(self, *args, **kwargs):
         # add custom validation here

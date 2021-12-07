@@ -1,5 +1,8 @@
 
 
+from django.contrib import auth
+
+
 {
     "name": "New product",
     "slug": "new-product",
@@ -45,8 +48,8 @@ curl \
 curl \
     - X GET \
     - H "Content-Type: application/json" \
-    - H Authorization: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjI0NDI5NzU5LCJqdGkiOiIyNDJiZjE3MjdkOGM0YWZlYTFiY2ViZTRkNGJkMTAzMCIsInVzZXJfaWQiOjF9.gZJ0rdWjhZPqEf_REo2yfJ34T0u4uOE7QdYsTbWV2jI" \
-    http: // localhost: 8000/api/v0/account/info/
+    - H Authorization: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM3Njc5MTcyLCJqdGkiOiI4NDY3NDNkNWExMmE0YjA4YjYwNjljNTQ1MWFiM2M4MCIsInVzZXJfaWQiOjJ9.vTsfdclW9sr9EdtcPIhZXtv3UiUTWFVVo0xjl7joQ40" \
+    http: // 127.0.0.1: 8000/credentials/company/me/
 
 curl \
     - X GET \
@@ -177,14 +180,14 @@ curl \
 # }"
 
 # {"username": "admin", "password": "batyrbet", "phone_number":63000000}
-    
+
 
 {
-    "user": {"username":"batyok32", "password": "batyrbet"},
+    "user": {"username": "batyok32", "password": "batyrbet"},
     "full_name": "Batyrbar",
     "description": "afafas",
     "address": "afafs",
     "found_date": "2021-09-21",
     "company_type": "OHH",
-    "phone_number":99361000001
+    "phone_number": 99361000001
 }

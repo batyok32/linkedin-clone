@@ -9,9 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 # genre_app = os.path.join(BASE_DIR / "genres/migrations/")
 auth_app = os.path.join(BASE_DIR / "authentication/migrations/")
+main_app = os.path.join(BASE_DIR / "main/migrations/")
 
 app_list = [
-    # genre_app,
+    main_app,
     auth_app
 ]
 
