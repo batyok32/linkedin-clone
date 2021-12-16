@@ -27,8 +27,8 @@ function JobItem2({
                         onClick={() => clickFun()}
                         role="button"
                         style={{
-                            width: "50px",
-                            height: "50px",
+                            width: "55px",
+                            height: "55px",
                             borderRadius: "5px",
                             backgroundImage: `url(${
                                 process.env.PUBLIC_URL + company
@@ -49,7 +49,7 @@ function JobItem2({
                         {name}
                     </div>
                     <Link
-                        to={`/company/${company?.full_name}/${company?.id}`}
+                        to={`/company/${company?.slug}/${company?.id}`}
                         className="truncate-overflow-1 text-blue text-decoration-none"
                         style={{
                             fontSize: "13px",

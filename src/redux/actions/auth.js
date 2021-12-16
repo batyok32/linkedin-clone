@@ -5,6 +5,9 @@ import {
     AUTHENTICATED_SUCCESS,
     LOGOUT,
     PROFILE_LOADED_SUCCESS,
+    AUTHENTICATED_FAIL,
+    ADD_ERROR,
+    ADD_MESSAGE,
 } from "../types/types";
 
 import errors from "./../messages/errors.json";
@@ -12,8 +15,8 @@ import success from "./../messages/success.json";
 import axios from "axios";
 import { authConfig, config, multipartConfig } from "../utils/config";
 
+//======================= LOAD USERS ===============================
 export const load_company = () => async (dispatch) => {
-    console.log("Loading company");
     if (localStorage.getItem("access")) {
         const authConfig = {
             headers: {
@@ -31,27 +34,27 @@ export const load_company = () => async (dispatch) => {
                 type: PROFILE_LOADED_SUCCESS,
                 payload: res.data,
             });
-            console.log("LOADED COMPANY: ", res);
         } catch (error) {
-            // console.log("Not authenticated");
+            return errors.error3;
         }
     } else {
-        // console.log("Not logged");
+        return "Not authenticated!";
     }
 };
 
 export const load_stranger_company = (pk) => async (dispatch) => {
-    // console.log("Loading company");
     try {
         const res = await axios.get(
             `${process.env.REACT_APP_API_URL}/credentials/company/${pk}/`,
             config
         );
         return res.data;
-    } catch (error) {}
+    } catch (error) {
+        return error;
+    }
 };
+
 export const load_freelancer = () => async (dispatch) => {
-    console.log("Loading freeelancer");
     if (localStorage.getItem("access")) {
         try {
             const authConfig = {
@@ -69,25 +72,16 @@ export const load_freelancer = () => async (dispatch) => {
                 type: PROFILE_LOADED_SUCCESS,
                 payload: res.data,
             });
-            console.log("LOADED FREELANCER: ", res);
         } catch (error) {
-            // console.log("Not authenticated");
+            return errors.error3;
         }
     } else {
-        // console.log("Not logged");
+        console.log("Not Authenticated");
     }
 };
 
-// ===============Load=User====================================
-// Taking an access token and trying to retrieve user information
-
 export const load_user = () => async (dispatch) => {
-    console.log("Loading user");
     if (localStorage.getItem("access")) {
-        console.log(
-            "ACCESS TOKEN FOR LOADING USER",
-            localStorage.getItem("access")
-        );
         try {
             const authConfig = {
                 headers: {
@@ -104,91 +98,54 @@ export const load_user = () => async (dispatch) => {
                 type: USER_LOADED_SUCCESS,
                 payload: res.data,
             });
-            console.log("RESULTs AFTER LOGIN", res);
 
             if (res.data.type === "COMPANY") {
                 dispatch(load_company());
             } else if (res.data.type === "FREELANCER") {
                 dispatch(load_freelancer());
             }
-            // console.log("Fetched success: ", res.data);
         } catch (error) {
-            // console.log("Not authenticated");
+            return errors.error3;
         }
     } else {
-        // console.log("Not logged");
+        return "Not authenticated!";
     }
 };
 
 // ===============Login====================================
-// Taking credentials and send it to take the jwt token
-
 export const login = (username, password) => async (dispatch) => {
-    console.log("In login", username, password);
     const body = JSON.stringify({ username: username, password: password });
-    console.log("Body", body);
     try {
         const res = await axios.post(
             `${process.env.REACT_APP_API_URL}/auth/jwt/create/`,
             body,
             config
         );
-        console.log("Loged", res.data);
         await dispatch({
             type: LOGIN_SUCCESS,
             payload: res.data,
-            message: success.success3,
         });
 
-        console.log("Loading ... user");
+        dispatch({
+            type: ADD_MESSAGE,
+            payload: success.success3,
+        });
         await dispatch(load_user());
         return res;
     } catch (error) {
-        // dispatch({
-        //     type: LOGIN_FAIL,
-        //     payload: errors.error4,
-        // });
-        // console.log("Error", error);
-        return errors.error4;
-    }
-};
-export const check_user = (username) => async (dispatch) => {
-    const body = JSON.stringify({ username });
-    try {
-        const res = await axios.post(
-            `${process.env.REACT_APP_API_URL}/credentials/user/exist/`,
-            body,
-            config
-        );
-        return res.data;
-    } catch (error) {
-        return errors.error4;
-    }
-};
-export const check_company = (full_name) => async (dispatch) => {
-    const body = JSON.stringify({ full_name });
-    try {
-        const res = await axios.post(
-            `${process.env.REACT_APP_API_URL}/credentials/company/exist/`,
-            body,
-            config
-        );
-        return res.data;
-    } catch (error) {
         return errors.error4;
     }
 };
 
+//======================= AUTH UTILS ===============================
 export const get_access_token = () => async (dispatch) => {
     const body = JSON.stringify({ refresh: localStorage.getItem("refresh") });
-    // console.log("Started refreshing token");
     try {
         const res = await axios.post(
             `${process.env.REACT_APP_API_URL}/auth/jwt/refresh/`,
             body,
             config
         );
-        // console.log("Logged successfully")
         dispatch({
             type: LOGIN_SUCCESS,
             payload: res.data,
@@ -213,31 +170,72 @@ export const checkAuthenticated = () => async (dispatch) => {
             );
 
             if (res.data.code !== "token_not_valid") {
-                // console.log("Checked successfully")
                 dispatch({
                     type: AUTHENTICATED_SUCCESS,
                 });
+                return 200;
             } else {
                 dispatch(get_access_token());
-                // console.log("Token not valid");
             }
         } catch (error) {
-            // dispatch(get_access_token());
-            // console.log("Old access token");
+            dispatch(get_access_token());
         }
     } else {
-        console.log("No access token");
+        dispatch({
+            type: AUTHENTICATED_FAIL,
+        });
+    }
+};
+
+export const check_user = (username) => async (dispatch) => {
+    const body = JSON.stringify({ username });
+    try {
+        const res = await axios.post(
+            `${process.env.REACT_APP_API_URL}/credentials/user/exist/`,
+            body,
+            config
+        );
+        return res.data;
+    } catch (error) {
+        return errors.error4;
+    }
+};
+export const check_company = (full_name, me) => async (dispatch) => {
+    const body = JSON.stringify({ full_name });
+    let editedConfig = config;
+    if (me) {
+        editedConfig = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `JWT ${localStorage.getItem("access")}`,
+                Accept: "application/json",
+            },
+        };
+    }
+    // console.log("CONFIG CHECK COMPANY", editedConfig);
+    try {
+        const res = await axios.post(
+            `${process.env.REACT_APP_API_URL}/credentials/company/exist/`,
+            body,
+            editedConfig
+        );
+        return res.data;
+    } catch (error) {
+        return errors.error4;
     }
 };
 
 export const logout = () => async (dispatch) => {
-    // console.log("Started logout");
     dispatch({
         type: LOGOUT,
+    });
+    dispatch({
+        type: ADD_MESSAGE,
         payload: success.success4,
     });
 };
 
+//======================= REGISTER ===============================
 export const signUpCompany = (userData, profileData) => async (dispatch) => {
     let form_data = new FormData();
     if (profileData.image) {
@@ -257,7 +255,6 @@ export const signUpCompany = (userData, profileData) => async (dispatch) => {
             form_data,
             multipartConfig
         );
-        // console.log("Loging", userData.username, userData.password);
         dispatch(login(userData.username, userData.password));
         return res.data;
     } catch (error) {
@@ -288,7 +285,6 @@ export const signUpFreelancer = (userData, profileData) => async (dispatch) => {
             form_data,
             multipartConfig
         );
-        console.log("Loging", userData.username, userData.password);
         dispatch(login(userData.username, userData.password));
         return res.data;
     } catch (error) {
@@ -297,6 +293,85 @@ export const signUpFreelancer = (userData, profileData) => async (dispatch) => {
         } else {
             return errors.error5;
         }
+    }
+};
+
+export const changeCompanyProfile = (profileData) => async (dispatch) => {
+    let form_data = new FormData();
+    if (localStorage.getItem("access")) {
+        if (profileData.image) {
+            form_data.append("logo", profileData.image.raw);
+        }
+        form_data.append("full_name", profileData.fullName);
+        form_data.append("description", profileData.compInfo);
+        form_data.append("address", profileData.address);
+        form_data.append("found_date", profileData.choosedDate);
+        form_data.append("company_type", profileData.companyType);
+        form_data.append("phone_number", profileData.phone_number);
+        const authMultipartConfig = {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `JWT ${localStorage.getItem("access")}`,
+                Accept: "application/json",
+            },
+        };
+        try {
+            const res = await axios.patch(
+                `${process.env.REACT_APP_API_URL}/credentials/company/me/`,
+                form_data,
+                authMultipartConfig
+            );
+            dispatch(load_user());
+            return res;
+        } catch (error) {
+            if (error.response.status === 400) {
+                return error.message;
+            } else {
+                return errors.error5;
+            }
+        }
+    } else {
+        // Not loged
+    }
+};
+export const changeFreelancerProfile = (profileData) => async (dispatch) => {
+    let form_data = new FormData();
+    if (localStorage.getItem("access")) {
+        let form_data = new FormData();
+        if (profileData.image) {
+            form_data.append("logo", profileData.image.raw);
+        }
+        form_data.append("full_name", profileData.fullName);
+        form_data.append("profession", profileData.profesion);
+        form_data.append("experience", profileData.experience);
+        form_data.append("knowledge", profileData.knowledge);
+        form_data.append("projects", profileData.projects);
+        form_data.append("phone_number", profileData.phone_number);
+        form_data.append("birth_date", profileData.birthDate);
+        const authMultipartConfig = {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `JWT ${localStorage.getItem("access")}`,
+                Accept: "application/json",
+            },
+        };
+        try {
+            const res = await axios.patch(
+                `${process.env.REACT_APP_API_URL}/credentials/freelancer/me/`,
+                form_data,
+                authMultipartConfig
+            );
+            dispatch(load_user());
+            return res;
+        } catch (error) {
+            if (error.response.status === 400) {
+                return error.message;
+            } else {
+                return errors.error5;
+            }
+        }
+    } else {
+        // Not loged
     }
 };
 

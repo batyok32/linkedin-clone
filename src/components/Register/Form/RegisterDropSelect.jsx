@@ -1,16 +1,33 @@
 import React, { useEffect, useState } from "react";
 
-function RegisterDropSelect({ name, full_name, icon, clickFun, optionsFun }) {
+function RegisterDropSelect({
+    name,
+    full_name,
+    icon,
+    clickFun,
+    optionsFun,
+    defaultOpt,
+    resetFun,
+}) {
     const [choosedItem, setChoosedItem] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [opts, setOptions] = useState([]);
     const [searchValue, setSearchValue] = useState("");
+    const [sawDefaultOpt, setSawDefaultOpt] = useState(false);
+
     useEffect(() => {
         if (searchValue.length >= 2) {
             setIsLoading(true);
             optionsFun(searchValue, setOptions, setIsLoading);
         }
     }, [searchValue]);
+    useEffect(() => {
+        // Used for starting if it has default value
+        if (defaultOpt && !sawDefaultOpt) {
+            defaultOpt(setChoosedItem);
+            setSawDefaultOpt(true);
+        }
+    }, [defaultOpt]);
     return (
         <div
             style={{ color: "rgb(51, 51, 51)", marginBottom: "2rem" }}
@@ -77,6 +94,27 @@ function RegisterDropSelect({ name, full_name, icon, clickFun, optionsFun }) {
                         maxHeight: "150px",
                     }}
                 >
+                    {choosedItem ? (
+                        <div className="px-2">
+                            <div
+                                onClick={() => {
+                                    setChoosedItem(null);
+                                    resetFun();
+                                }}
+                                role="button"
+                                style={{
+                                    borderRadius: "10px",
+                                    fontWeight: "normal",
+                                }}
+                                className="dropdown-item truncate-overflow-1 blue-btn justify-content-between align-items-center my-2 py-2 d-flex"
+                            >
+                                <span>{choosedItem.name}</span>
+                                <i class="bi bi-x-lg"></i>
+                            </div>
+                        </div>
+                    ) : (
+                        ""
+                    )}
                     {Array.isArray(opts) &&
                         opts.length > 0 &&
                         opts.map((option) => {

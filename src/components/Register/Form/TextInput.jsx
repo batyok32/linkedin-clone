@@ -12,6 +12,8 @@ function TextInput({
     setStartedWriting,
     inputChange,
     formErrors,
+    max_length,
+    min_length,
 }) {
     return (
         <div style={{ marginBottom: "2rem" }}>
@@ -42,6 +44,8 @@ function TextInput({
                 }`}
                 style={{ borderRadius: "7px" }}
                 aria-describedby={name}
+                max={max_length && max_length}
+                min={min_length && min_length}
                 required
             />
             <div class="invalid-feedback">{formErrors?.[name]}</div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import FilterRow from "../components/Form/FreelancerFilterRow";
 import FreeItem from "../components/Freelancers/FreeItem";
+import FreeModal from "../components/Freelancers/FreeModal";
 import JobPagination from "../components/Jobs/JobPagination";
 import { load_freelancers } from "../redux/actions/main";
 import { selectFreelancers } from "../redux/selectors/main";
@@ -67,47 +68,73 @@ function Freelancers() {
             loadFreelancersFun();
         }
     }, [loadMore]);
-    return (
-        <div className="container">
-            <FilterRow
-                isLoading={isLoading}
-                setClickSearch={setClickSearch}
-                filterData={filterData}
-                setFilterData={setFilterData}
-            />
-            <div className="my-5">
-                <div className="h3 mb-4 text-center">
-                    Фрилансеры {count ? <> - {count}</> : " - 0"}
-                </div>
 
-                <div className="row  row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 my-4">
-                    {Array.isArray(freelancers) &&
-                        freelancers.length >= 1 &&
-                        freelancers.map((data) => {
-                            return (
-                                <FreeItem
-                                    key={data.id}
-                                    logo={data.logo}
-                                    full_name={data.full_name}
-                                    profession={data.profession}
-                                    created={data.created}
-                                    city={data.city}
-                                    knowledge={data.knowledge}
-                                />
-                            );
-                        })}
+    // Modal
+    const openModalRef = React.createRef();
+    const closeModalRef = React.createRef();
+    const [modalItem, setModalItem] = useState(null);
+    const [clickedModalItem, setClickModalItem] = useState(false);
+
+    useEffect(() => {
+        if (modalItem && clickedModalItem) {
+            openModalRef.current.click();
+            setClickModalItem(false);
+        }
+    }, [clickedModalItem]);
+
+    return (
+        <>
+            <FreeModal data={modalItem} closeModalRef={closeModalRef} />
+            <div
+                ref={openModalRef}
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal3"
+            ></div>
+            <div className="container">
+                <FilterRow
+                    isLoading={isLoading}
+                    setClickSearch={setClickSearch}
+                    filterData={filterData}
+                    setFilterData={setFilterData}
+                />
+                <div className="my-5">
+                    <div className="h3 mb-4 text-center">
+                        Фрилансеры {count ? <> - {count}</> : " - 0"}
+                    </div>
+
+                    <div className="row  row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 my-4">
+                        {Array.isArray(freelancers) &&
+                            freelancers.length >= 1 &&
+                            freelancers.map((data) => {
+                                return (
+                                    <FreeItem
+                                        clickFun={() => {
+                                            setModalItem(data);
+                                            setClickModalItem(true);
+                                        }}
+                                        key={data.id}
+                                        logo={data.logo}
+                                        full_name={data.full_name}
+                                        profession={data.profession}
+                                        created={data.created}
+                                        city={data.city}
+                                        knowledge={data.knowledge}
+                                    />
+                                );
+                            })}
+                    </div>
+                    {next ? (
+                        <JobPagination
+                            jobsLength={freelancers?.length}
+                            setLoadMore={setLoadMore}
+                            isLoading={isLoading}
+                        />
+                    ) : (
+                        ""
+                    )}
                 </div>
-                {next ? (
-                    <JobPagination
-                        jobsLength={freelancers?.length}
-                        setLoadMore={setLoadMore}
-                        isLoading={isLoading}
-                    />
-                ) : (
-                    ""
-                )}
             </div>
-        </div>
+        </>
     );
 }
 

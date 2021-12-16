@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import FilterRow from "../components/Form/JobFilterRow";
-import JobItem2 from "../components/Jobs/JobItem2";
 import { get_profession, load_jobs } from "../redux/actions/main";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { selectJobs } from "../redux/selectors/main";
 import { getJobsConfig } from "../utils/jobsConfig";
 import JobPagination from "../components/Jobs/JobPagination";
 import JobModal from "../components/Jobs/JobModal";
+import JobsMap from "../components/Jobs/JobsMap";
 
 const mapState = (state) => ({
     jobs: selectJobs(state),
@@ -42,7 +42,6 @@ function Jobs() {
     const closeModalRef = React.createRef();
     const [modalItem, setModalItem] = useState(null);
     const [clickedModalItem, setClickModalItem] = useState(false);
-    const location = useLocation();
 
     useEffect(() => {
         if (modalItem && clickedModalItem) {
@@ -50,11 +49,6 @@ function Jobs() {
             setClickModalItem(false);
         }
     }, [clickedModalItem]);
-    useEffect(() => {
-        if (modalItem && location) {
-            closeModalRef.current.click();
-        }
-    }, [location]);
 
     // Get the data function
     const loadJobsFun = () => {
@@ -136,31 +130,11 @@ function Jobs() {
                     <div className="h3 mb-4 text-center">
                         Работа {count ? <> - {count}</> : " - 0"}
                     </div>
-
-                    <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3  ">
-                        {Array.isArray(jobs) &&
-                            jobs.length >= 1 &&
-                            jobs.map((job) => {
-                                return (
-                                    <JobItem2
-                                        clickFun={() => {
-                                            setModalItem(job);
-                                            setClickModalItem(true);
-                                        }}
-                                        key={job.id}
-                                        name={job.name}
-                                        profession={job.profession}
-                                        company={job.company}
-                                        min_salary={job?.min_salary}
-                                        max_salary={job?.max_salary}
-                                        after_meeting={job?.after_meeting}
-                                        city={job.city}
-                                        updated={job.updated}
-                                    />
-                                );
-                            })}
-                    </div>
-
+                    <JobsMap
+                        jobs={jobs}
+                        setModalItem={setModalItem}
+                        setClickModalItem={setClickModalItem}
+                    />
                     {next ? (
                         <JobPagination
                             jobsLength={jobs?.length}

@@ -24,19 +24,19 @@ export function validateRegisterCompanyProfile(values) {
     let errors = {};
     // console.log("Validating", values);
 
-    if (!values.fullName.trim()) {
+    if (!values?.fullName?.trim()) {
         errors.fullName = formErrors.companyName;
     }
 
-    if (!values.compInfo.trim()) {
+    if (!values?.compInfo?.trim()) {
         errors.compInfo = formErrors.usernameError;
     }
 
-    if (!values.address.trim()) {
+    if (!values?.address?.trim()) {
         errors.address = formErrors.usernameError;
     }
 
-    if (values.phone_number) {
+    if (values?.phone_number) {
         if (
             (values?.phone_number >= 99361000000 &&
                 values?.phone_number <= 99365999999) ||
@@ -63,7 +63,7 @@ export function validateRegisterFreelanacerProfile(values) {
     let errors = {};
     // console.log("Validating", values);
 
-    if (!values.fullName.trim()) {
+    if (!values?.fullName.trim()) {
         errors.fullName = formErrors.freelancerName;
     }
 
@@ -94,16 +94,6 @@ export function validateRegisterFreelanacerProfile(values) {
     } else {
         errors.phone_number = formErrors.phoneNumber;
     }
-    // if (values.min_cost >= values.max_cost) {
-    //     errors.max_cost = formErrors.freelancermaxcost;
-    // }
-
-    // if (values.min_cost < 0) {
-    //     errors.min_cost = formErrors.freelancercost;
-    // }
-    // if (values.max_cost < 0) {
-    //     errors.max_cost = formErrors.freelancercost;
-    // }
 
     if (!values.image.raw) {
         errors.image = "Error";

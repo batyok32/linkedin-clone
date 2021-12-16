@@ -176,3 +176,16 @@ export const post_job = (jobData, user) => async (dispatch) => {
         console.log("No access token");
     }
 };
+
+export const retrieve_freelancer = (pk) => async (dispatch) => {
+    try {
+        const res = await axios.get(
+            `${process.env.REACT_APP_API_URL}/credentials/freelancer/${pk}/`,
+            config
+        );
+        return res.data;
+        // console.log.log("LOADED FREELANCER: ", res);
+    } catch (error) {
+        // console.log("Not authenticated");
+    }
+};

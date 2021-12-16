@@ -1,8 +1,11 @@
 import React from "react";
+import EditCompany from "./containers/EditCompany";
+import EditFreelancer from "./containers/EditFreelancer";
 import Freelancers from "./containers/Freelancers";
 import Jobs from "./containers/Jobs";
 import Login from "./containers/Login";
 import PostJob from "./containers/PostJob";
+import RetrieveCompany from "./containers/RetrieveCompany";
 const Home = React.lazy(() => import("./containers/Home"));
 const SignUp = React.lazy(() => import("./containers/SignUp"));
 
@@ -10,6 +13,10 @@ export const mainRoutes = [
     {
         path: "/freelancers",
         comp: <Freelancers />,
+    },
+    {
+        path: "/company/:slug/:id",
+        comp: <RetrieveCompany />,
     },
 
     {
@@ -43,13 +50,23 @@ export const companyRoutes = [
         comp: <PostJob />,
         exact: true,
     },
+    {
+        path: "/edit/company/profile",
+        comp: <EditCompany />,
+        exact: true,
+    },
 ];
 
-// 2. Retrieve Freelancer
-// 3. Retrieve Company
+export const freelancerRoutes = [
+    {
+        path: "/edit/freelancer/profile",
+        comp: <EditFreelancer />,
+        exact: true,
+    },
+];
 
-// 4. Update Company Profile
 // 5. Update Freelancer Profile
+// 7. Company Jobs list, retreive, update, delete
 
 // 6. Admin
 

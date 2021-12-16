@@ -231,6 +231,8 @@ function PostJob() {
                     setStartedWriting={setStartedWriting}
                     inputChange={numberInputChange}
                     formErrors={formErrors}
+                    max_length={24}
+                    min_length={0}
                 />
                 <TextAreaInput
                     name="skills"

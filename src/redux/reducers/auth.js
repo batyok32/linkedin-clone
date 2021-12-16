@@ -9,6 +9,10 @@ import {
     AUTHENTICATED_FAIL,
     LOGOUT,
     PROFILE_LOADED_SUCCESS,
+    REMOVE_MESSAGES,
+    ADD_MESSAGE,
+    REMOVE_ERRORS,
+    ADD_ERROR,
 } from "../types/types";
 
 const initialState = {
@@ -30,13 +34,11 @@ export default function auth(state = initialState, action) {
             return {
                 ...state,
                 isAuthenticated: true,
-                error: null,
             };
         case AUTHENTICATED_FAIL:
             return {
                 ...state,
                 isAuthenticated: false,
-                error: payload,
             };
 
         // Login
@@ -48,8 +50,6 @@ export default function auth(state = initialState, action) {
                 isAuthenticated: true,
                 access: payload.access,
                 refresh: payload.refresh,
-                error: null,
-                success_message: [action.message],
             };
         case LOGIN_FAIL:
             localStorage.removeItem("access");
@@ -60,8 +60,6 @@ export default function auth(state = initialState, action) {
                 refresh: null,
                 isAuthenticated: false,
                 user: null,
-                success_message: null,
-                error: payload,
             };
 
         // Load User Data
@@ -69,13 +67,11 @@ export default function auth(state = initialState, action) {
             return {
                 ...state,
                 user: payload,
-                error: null,
             };
         case USER_LOADED_FAIL:
             return {
                 ...state,
                 user: null,
-                error: payload,
             };
 
         case PROFILE_LOADED_SUCCESS:
@@ -96,16 +92,12 @@ export default function auth(state = initialState, action) {
                 isAuthenticated: null,
                 user: null,
                 profile: null,
-                success_message: payload,
-                error: null,
             };
 
         case SIGN_UP_SUCCESS:
             return {
                 ...state,
                 isAuthenticated: false,
-                success_message: [payload],
-                error: null,
             };
         case SIGN_UP_FAIL:
             localStorage.removeItem("access");
@@ -116,8 +108,26 @@ export default function auth(state = initialState, action) {
                 refresh: null,
                 isAuthenticated: false,
                 user: null,
-                success_message: null,
+            };
+        case ADD_ERROR:
+            return {
+                ...state,
                 error: payload,
+            };
+        case REMOVE_ERRORS:
+            return {
+                ...state,
+                error: null,
+            };
+        case ADD_MESSAGE:
+            return {
+                ...state,
+                success_message: payload,
+            };
+        case REMOVE_MESSAGES:
+            return {
+                ...state,
+                success_message: null,
             };
 
         default:

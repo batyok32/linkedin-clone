@@ -123,13 +123,6 @@ function Header() {
                                         <i class="bi bi-door-open-fill me-2"></i>
                                         Выйти
                                     </div>
-                                    <Link
-                                        to="/login"
-                                        class="dropdown-item top-nav fw-500"
-                                    >
-                                        <i class="bi bi-person-lines-fill me-2"></i>
-                                        Профиль
-                                    </Link>
                                 </>
                             ) : (
                                 <>
@@ -159,13 +152,33 @@ function Header() {
                                 </a>
                             )}
                             {user?.type === "COMPANY" && (
-                                <Link
-                                    to="/jobs/post"
-                                    class="dropdown-item top-nav fw-500"
-                                >
-                                    <i class="bi bi-file-earmark-plus-fill me-2"></i>{" "}
-                                    Выложить работу
-                                </Link>
+                                <>
+                                    <Link
+                                        to="/jobs/post"
+                                        class="dropdown-item top-nav fw-500"
+                                    >
+                                        <i class="bi bi-file-earmark-plus-fill me-2"></i>{" "}
+                                        Выложить работу
+                                    </Link>
+                                    <Link
+                                        to="/edit/company/profile"
+                                        class="dropdown-item top-nav fw-500"
+                                    >
+                                        <i class="bi bi-person-lines-fill me-2"></i>
+                                        Профиль
+                                    </Link>
+                                </>
+                            )}
+                            {user?.type === "FREELANCER" && (
+                                <>
+                                    <Link
+                                        to="/edit/freelancer/profile"
+                                        class="dropdown-item top-nav fw-500"
+                                    >
+                                        <i class="bi bi-person-lines-fill me-2"></i>
+                                        Профиль
+                                    </Link>
+                                </>
                             )}
                         </ul>
                     </div>

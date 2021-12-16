@@ -60,7 +60,6 @@ function CompanyProfile({ userData }) {
 
     const submitHandler = (e) => {
         e.preventDefault();
-        convertDate();
         setIsLoading(true);
         setFormErrors(validateRegisterCompanyProfile(profileData));
         setStartedWriting({
