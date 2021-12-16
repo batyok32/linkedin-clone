@@ -33,11 +33,14 @@ class JobListCreateView(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user.is_company:
+            print("In create job")
             serializer = self.get_create_serializer(
                 data={**request.data, "company": request.user.id})
+            print("Data", request.data)
             if serializer.is_valid():
                 self.perform_create(serializer)
                 headers = self.get_success_headers(serializer.data)
+                print("Created", serializer.data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
             else:
                 return Response(serializer.errors)

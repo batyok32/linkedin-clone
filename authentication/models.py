@@ -8,6 +8,7 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 # from django.core.validators import MinValueValidator, MaxValueValidator
 from main.utils import CITIES
+from django.template.defaultfilters import slugify
 
 
 class Profession(models.Model):
@@ -235,6 +236,7 @@ class CompanyProfile(models.Model):
         default="default.jpg"
     )
     full_name = models.CharField("Full Name", max_length=255, unique=True)
+    slug = models.SlugField("Slug", max_length=255, blank=True, null=True)
     description = models.TextField("Comapany Information")
     address = models.CharField("Address of Company", max_length=255)
     found_date = models.DateField("Date of Foundation of Company")
@@ -258,6 +260,9 @@ class CompanyProfile(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
+        if not self.id:
+            # Newly created object, so set slug
+            self.slug = slugify(self.full_name)
         super(CompanyProfile, self).save(*args, **kwargs)
 
 

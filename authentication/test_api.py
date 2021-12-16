@@ -45,10 +45,9 @@ curl \
 
 -H Authorization: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYyNTYzMzI4NiwianRpIjoiMjdmZTE4MGQ5YzVhNGIzZDhmZGMyYzdmNzAxNTI3OWUiLCJ1c2VyX2lkIjoxfQ.jN7fYh3Zi3J1aAIkjavUOz7vNk-mhAOrNlG_U__qGmE" \
 
-curl \
-    - X GET \
+curl - X GET \
     - H "Content-Type: application/json" \
-    - H Authorization: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM3Njc5MTcyLCJqdGkiOiI4NDY3NDNkNWExMmE0YjA4YjYwNjljNTQ1MWFiM2M4MCIsInVzZXJfaWQiOjJ9.vTsfdclW9sr9EdtcPIhZXtv3UiUTWFVVo0xjl7joQ40" \
+    - H Authorization: "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM3Njc5NDY1LCJqdGkiOiJiZGUwZTQwYWNkMzY0MTlkYTBiNzdkM2JjZjhkMTNjZCIsInVzZXJfaWQiOjJ9.uG69xwlNU0xWvra1ogAvtZnX4F8ijP141gjVZq6l6xY" \
     http: // 127.0.0.1: 8000/credentials/company/me/
 
 curl \
